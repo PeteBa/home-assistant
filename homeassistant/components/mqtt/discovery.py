@@ -37,6 +37,7 @@ SUPPORTED_COMPONENTS = [
     "fan",
     "light",
     "lock",
+    "plant",
     "sensor",
     "switch",
     "tag",
@@ -83,6 +84,8 @@ async def async_start(
         topic = msg.topic
         topic_trimmed = topic.replace(f"{discovery_topic}/", "", 1)
         match = TOPIC_MATCHER.match(topic_trimmed)
+
+        _LOGGER.warning("MQTT Discovery: %s", topic)
 
         if not match:
             return

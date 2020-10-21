@@ -114,7 +114,12 @@ ENABLE_LOAD_HISTORY = False
 
 async def async_setup(hass, config):
     """Set up the Plant component."""
-    component = EntityComponent(_LOGGER, DOMAIN, hass)
+    component = hass.data[DOMAIN] = EntityComponent(_LOGGER, DOMAIN, hass)
+
+    _LOGGER.info("Setting up plant %s", config)
+
+    if DOMAIN not in config:
+        return True
 
     entities = []
     for plant_name, plant_config in config[DOMAIN].items():
@@ -124,6 +129,16 @@ async def async_setup(hass, config):
 
     await component.async_add_entities(entities)
     return True
+
+
+async def async_setup_entry(hass, entry):
+    """Set up a config entry."""
+    return await hass.data[DOMAIN].async_setup_entry(entry)
+
+
+async def async_unload_entry(hass, entry):
+    """Unload a config entry."""
+    return await hass.data[DOMAIN].async_unload_entry(entry)
 
 
 class Plant(Entity):
